@@ -1,11 +1,9 @@
 #! /bin/bash
 
-SRC="/root/git/ocp-demo/misc"
-DASHBOARD_IP=""
-BACKEND=$1
-
-python3 -m venv $SRC/.venv
-$SRC/.venv/bin/pip install -r $SRC/requirements.txt
 
 clear
-$SRC/.venv/bin/python3 ~/git/ocp-demo/misc/run-benchmark.py $BACKEND -d $DASHBOARD_IP
+xnvmeperf cuda-run $(cat ~/git/misc/bdfs_node0.txt) --be upcie-cuda --gpu_id 0 --iopattern randread \
+  --iosize 512 --qdepth 128 --runtime 20 --nqueues 4 --sq-hostmem --report-freq 0.5
+
+xnvmeperf run $(cat ~/git/misc/bdfs_node1.txt) --be upcie --iopattern randread --iosize 512 \
+  --qdepth 128 --runtime 20 --cpulist 3,5 --report-freq 0.5

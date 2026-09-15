@@ -12,22 +12,19 @@ PRETTY_NAME = {"aisio": "AiSIO", "gds": "GDS", "posix": "POSIX"}
 
 def push(source: str):
   path = Path(__file__).parent / f"{source}.csv"
-
-  post(f"http://{HOST}/post?source={source}&data=0,0,0,0\n")
   sleep(2)
 
   with open(path, "r") as file:
     start = 0
     for line in file.readlines()[1:]:
       line = line.split(",")
-      line[1] = str(int(line[1]) / BATCHES * 100)
-      
       t = float(line[0])
       post(f"http://{HOST}/post?source={source}&data={','.join(line)}")
       sleep(t - start)
       start = t
 
-    print(f"\n{PRETTY_NAME[source]} done in {t:.1f}s")
+    pn = PRETTY_NAME[source] if source in PRETTY_NAME else source
+    print(f"\n{pn} done in {t:.1f}s")
 
 
 def parse_args():
@@ -50,5 +47,5 @@ def parse_args():
 if __name__ == "__main__":
   _ = parse_args()
 
-  for source in ["posix", "gds", "aisio"]:
+  for source in ["xnvmeperf-cuda-run", "xnvmeperf-run", "cpu-utilization", "gpu-utilization"]:
     Thread(target=push, args=[source]).start()
