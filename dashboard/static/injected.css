@@ -21,28 +21,6 @@ body {
   transition: width 1s linear !important;
 }
 
-.grafana-app #\35 , #\31 0 , #\31 5 { 
-  & section > div:last-child > div {
-    border: 1px solid;
-    border-image-source: linear-gradient(90deg,rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.2) 100%);
-    border-image-slice: 1;
-  }
-  & div[style*="flex-direction: row-reverse"] :first-child {
-    position: absolute !important;
-    left: 50% !important;
-    top: 50% !important;
-    transform: translate(-50%, -50%);
-    z-index: 2;
-    height: 40px !important;
-    background: transparent !important;
-    color: #4e7186 !important;
-    mix-blend-mode: plus-lighter;
-    font-size: 40px !important;
-    line-height: 46px;
-
-  }
-}
-
 .react-grid-item:has(.markdown-html) section > div:last-child {
   padding: 0px 8px !important;
   margin-top: -12px;
@@ -73,4 +51,23 @@ div[style*="display: flex; flex-flow:"] [style*="line-height: 1.2;"] {
   font-size: 50px !important;
   font-weight: 700 !important;
   margin-top: -86px !important;
-} 
+  color: white !important;
+}
+div[style*="display: flex; flex-flow:"] [style*="line-height: 1.2;"] span {
+  font-size: 50px !important;
+}
+
+[data-testid="public-dashboard-footer"] {
+  display: none;
+}
+
+.gauge-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: white !important;
+  background:  linear-gradient(90deg, rgb(78, 219, 254), #9C6DE1); /* horizontal gradient */ 
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align:center;
+}

@@ -1,11 +1,11 @@
 :root {
-  --light-blue: rgb(78, 219, 254);
+  --light-blue: #4edbfe;
   --blue: rgb(57, 144, 233);
   --dark-blue:rgb(20, 102, 184);
   --darker-blue: rgb(16, 34, 70);
 
   --orange: rgb(255, 167, 38);
-  --purple: rgb(156, 0, 235);
+  --purple: #9C6DE1;
 }
 
 * {
@@ -14,44 +14,80 @@
   font-family: "Samsung Sharp Sans", sans-serif;
 }
 body {
-  background-image: linear-gradient(rgba(0 0 0 / 0.5)), url(/static/background.png);
+  background-image: url(/static/background2026.png);
   background-color: white;
   color: rgb(17, 18, 23);
-  padding: 60px 50px;
+  padding: 60px 50px 0px 50px;
   background-size: cover;
 }
 
 header {
-  display: flex;
-  align-items: center;
-  font-family: Arial, sans-serif;
   margin-bottom: 60px;
 }
+
 h1 {
-  color: white;  margin-top: 36px;
+  color: white;
   font-weight: 700;
   font-size: 50px;
-  margin: 12px 0 0 0;
+  margin: 12px 0 18px 0;
+}
+h2 {
+  font-size: 24px;
+  text-align: center;
+}
+h4 {
+  font-size: 24px;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+}
+h5 {
+  font-size: 20px;
+  font-weight: normal;
+  margin: 15px 0px;
+}
+
+.footnote {
+  margin: 10px 0px 30px 0px;
+  text-align: right;
+  opacity: 60%;
+}
+
+code {
+  font-family: monospace;
+  font-size: 120%;
+  margin: 5px;
 }
 
 .grid {
   display: grid;
   grid-template-columns: [full-start] 1fr 1fr [full-end];
-  gap: 50px 30px;
+  gap: 0px 100px;
+}
+
+.subgrid {
+  display: grid;
+  grid-template-columns: [sub-start] 1fr 1fr [sub-end];
+  gap: 10px 50px;
 }
 
 .grid > * {
-  border: 1px solid;
-  border-image-source: linear-gradient(190deg,rgba(121, 121, 121, 0.64) 20%, rgba(179, 179, 179, 0.64) 50%, rgba(255, 255, 255, 0.05) 100%);
-  border-image-slice: 1;
   width: 100%;
-  padding: 20px 10px;
-  background-image: url(/static/shade.png);
+  align-content: start;
+}
+
+.bordered, .asciinema {
+  border: 1px solid;
+  border-image-source: linear-gradient(180deg,#516477 0%, rgba(255, 255, 255, 0.05) 80%);
+  border-image-slice: 1;
+}
+.bordered {
+  background-image: linear-gradient(150deg,rgba(129, 142, 156, 0.30) 0%, rgba(255, 255, 255, 0.00) 30%);
   background-repeat: no-repeat;
-  background-size: 1000px;
-  background-position: right top;
   background-color: rgba(0, 7, 30, 0.5);
-  align-content: center;
+  padding: 30px 50px;
+  display: flex;
+  flex-direction: column;
 }
 
 .grid #terminal {
@@ -65,15 +101,55 @@ h1 {
   padding: 10px 20px;
 }
 
+.grid-list {
+  grid-template-columns: 210px 200px;
+  display: grid;
+  gap: 0px 20px;
+  justify-content: center;
+  margin: 80px 0px;
+  position: relative;
+}
+
+.grid-list::before {
+  content: "";
+  position: absolute;
+  width: 619px;
+  height: 140px;
+  background-image: linear-gradient(90deg, rgba(0,0,0,0), #202F41);
+  top: -20px;
+  z-index: -1;
+}
+
+.grid-list span.icon {
+  font-weight: bold;
+  font-size: 90px;
+  text-align: right;
+  width: 100%;
+}
+
+.grid-list > span {
+  align-content: center;
+  font-size: 17px;
+}
+
 iframe { 
   border: none;
   width: 100%;
-  height: 680px;
   transform-origin: top left;
+}
+#iops-dashboard {
+  height: 400px;
 }
 #ratio-dashboard {
   height:50px;
   width:150px;
+}
+#util-dashboard {
+  z-index: -1;
+  position:fixed;
+  top: 0;
+  height: 400px;
+  opacity: 0%;  
 }
 
 img {
@@ -90,25 +166,139 @@ img {
 }
 
 .gradient {
-  background:  linear-gradient(90deg, var(--light-blue), var(--blue)); /* horizontal gradient */ 
+  background:  linear-gradient(90deg, var(--light-blue), var(--purple)); /* horizontal gradient */ 
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   width: fit-content;
 }
 
-.grid div:has(h4) {
-  align-content: baseline;
-  padding: 40px;
-}
-.grid h4 {
-  font-size: 24px;
-  margin: 0;
-}
 .grid p {
   font-size: 18px;
   line-height: 1.5;
 }
 p:last-child {
   margin-bottom: 0;
+}
+
+.htop-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 22px;
+  font-weight: bold;
+}
+.htop-bar .bracket {
+  color: var(--light-blue);
+  font-size: 30px;
+  background: linear-gradient(180deg, var(--light-blue), var(--blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  width: fit-content;
+}
+.htop-bar .value {
+  min-width: 4.5ch;
+  text-align: right;
+}
+.htop-bar .cells {
+  display: flex;
+  flex: 1;
+  gap: 2px;
+  height: 28px;
+}
+.htop-bar .cells span {
+  flex: 1;
+  background: linear-gradient(180deg, rgba(32, 47, 65,0.5), rgb(32, 47, 65));
+}
+.htop-bar .cells span.on {
+  background: linear-gradient(180deg, var(--light-blue), var(--blue));
+}
+
+.asciinema * {
+  font-family: monospace;
+  color: unset;
+}
+.ap-player.asciinema-player-theme-aisio {
+  --term-color-foreground: #ffffff;
+  --term-color-background: #00071e;
+
+  --term-color-0: #000000;
+  --term-color-1: #ff5f5f;
+  --term-color-2: #398FE9;
+  --term-color-3: #d0d0d0;
+  --term-color-4: #0F2246;
+  --term-color-5: #4edbfe;
+  --term-color-6: #ffa726;
+  --term-color-7: #d0d0d0;
+  /* --term-color-8 … 15: bright variants; they fall back to 0–7 if omitted */
+
+  height: unset !important;
+}
+
+.ap-line[style="--row: 32;"] span,
+.ap-line[style="--row: 33;"] span,
+.ap-line[style="--row: 34;"] span {
+  color: #9C6DE1;
+}
+
+.sideways {
+  writing-mode: sideways-lr;
+  height: 100%;
+  text-align: center;
+  font-size: 35px;
+  font-weight: 500;
+}
+
+#millions-dashboard {
+  width: 190px;
+  height: 70px;
+  margin: 0px -20px 0 -30px;
+}
+
+.blue {
+  color: #06B8F3;
+}
+
+.parameters {
+  gap: 0px 60px;
+  justify-content: center;
+  padding: 0px 170px;
+  margin-bottom: 40px;
+}
+
+.parameters p {
+  text-align: center;
+  font-size: 14px;
+}
+
+.bar-total {
+  font-size: 16px;
+  opacity: 60%;
+  transform: translate(20px, -1px);
+  display: inline-block;
+}
+
+.grid.qr {
+  justify-items: center;
+  text-align: center;
+  gap: 9px;
+  width: 380px;
+  align-self: center;
+}
+
+.svg {
+  width: 140px;
+  aspect-ratio: 1;
+  background: white;
+}
+.svg#opends {
+  mask: url(/static/opends.svg) center / contain no-repeat;
+  mask-mode: luminance;
+}
+.svg#aisio {
+  mask: url(/static/aisio.svg) center / contain no-repeat;
+  mask-mode: luminance;
 }

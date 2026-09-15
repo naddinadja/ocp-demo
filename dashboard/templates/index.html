@@ -11,103 +11,220 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='font-face.css') }}"
     />
+    <link rel="stylesheet" href="{{ url_for('static', filename='asciinema-player.css') }}" />
     <title>AiSiO benchmark</title>
   </head>
   <body>
-    <header>
-      <h1>AiSIO is </h1>
-      <iframe id="ratio-dashboard" src="/grafana/d/5d42317c-6e69-4a17-98a7-462f311bbaed/ratio?kiosk"></iframe>
-      <h1>Times Faster than State of the Art</h1>
-    </header>
     <main class="grid">
-      <div id="grafana">
-        <iframe id="benchmark-dashboard" src="/grafana/d/c83d24b6-3bf5-4963-9a71-6f1676d75f0e/aisio-benchmark?kiosk"></iframe>
-      </div>
       <div>
-        <iframe id="terminal"></iframe>
-        <script>
-          const iframeSrc = `http://${window.location.hostname}:8910`;
-          document.getElementById('terminal').src = iframeSrc;
-        </script>
-        <!-- <img src="{{ url_for('static', filename='rec-crop.gif') }}?it=0"> -->
+        <h1>
+          <span style="top:12px;position:relative;">~</span>
+          <iframe id="millions-dashboard" src="/grafana/d/7612585a-3923-4db1-92d5-4105ed41723f/million-iops?kiosk"></iframe>
+          IOPS with AiSIO
+        </h1>
+        <div class="bordered">
+          <p class="blue">Experiment A: Running CPU- and GPU-initiated I/O at the same time on one server. </p>
+          <iframe id="iops-dashboard" src="/grafana/d/9563df02-7028-435f-9491-24af541fa5b6/ocp-2026?kiosk"></iframe>
+          <div class="grid parameters">
+            <p>8 NVMe SSDs · 512 B random reads · 1 queue per SSD · Queue depth 128 · 2 CPU threads</p>
+            <p>8 NVMe SSDs · 512 B random reads · 2 queues per SSD · Queue depth 128 · 2048 GPU threads</p>
+          </div>
+          <h5><span>CPU Utilization</span> <span class="cpu-value"></span><span class="bar-total">total: 48 Cores / 96 threads</span></h5>
+          <div class="htop-bar" id="cpu-bar" data-panel="2" data-total="50">
+            <span class="bracket">[</span>
+            <span class="cells"></span> 
+            <span class="bracket">]</span>
+          </div>
+          <div class="footnote">CPU utilization reported by <code>mpstat</code></div>
+          <h5><span>GPU Utilization</span> <span class="gpu-value"></span><span class="bar-total">total: 7296 warps</span></h5>
+          <div class="htop-bar" id="gpu-bar" data-panel="3" data-total="50">
+            <span class="bracket">[</span>
+            <span class="cells"></span>
+            <span class="bracket">]</span>
+          </div>
+          <div class="footnote">SM occupancy reported by <code>dcgmi</code> (Field ID: 1003)</div>
+          <!-- 
+          xnvmeperf run
+          - Devices: [0000:ca:00.0, 0000:cb:00.0, 0000:cc:00.0, 0000:cd:00.0, 0000:e1:00.0, 0000:e2:00.0, 0000:e3:00.0, 0000:e4:00.0] (total: 8)
+          - io pattern: randread
+          - queues per device: 1
+          - queue depth: 128
+          - cq in gpu memory: no
+          - sq in host memory: no
+          - buf host bounce (read to host, copy to GPU): no
+          - io size: 512
+          - runtime: 20
+          - CPUs: [3, 5] (total: 2)
+          - host_heap_size: 134221824 bytes
+          
+          xnvmeperf cuda-run
+          - Devices: [0000:4a:00.0, 0000:4b:00.0, 0000:4c:00.0, 0000:4d:00.0, 0000:61:00.0, 0000:62:00.0, 0000:63:00.0, 0000:64:00.0] (total: 8)
+          - io pattern: randread
+          - queues per device: 4
+          - queue depth: 128
+          - cq in gpu memory: no
+          - sq in host memory: yes
+          - buf host bounce (read to host, copy to GPU): no
+          - io size: 512
+          - runtime: 20
+          - host_heap_size: 536870912 bytes
+          - device_heap_size: 538968064 bytes
+          -->
+          <h2>Follow our work on Github</h2>
+          <div class="grid qr">
+            <div id="aisio" class="svg"></div>
+            <div id="opends" class="svg"></div>
+            <div>AiSIO</div>
+            <div>OpenDS</div>
+          </div>
+        </div>
+        <iframe id="util-dashboard" src="/grafana/d/7732d1a4-4522-4f1a-b55b-f686e7a95519/utilization?kiosk"></iframe>
       </div>
-      <div>
-        <!-- 
-        4k I/O
-        SR-IOV enabled
-        shuffled data / random
-        ImageNet2012
-        backends - posix, 
-        file system is live 
-        -->
-        <h4 class="gradient">AiSIO: Accelerator-initiated Storage I/O</h4>
-        <p>
-          This demo runs a data loader benchmark using the ImageNet dataset to
-          showcase AiSIO's breakthrough in GPU-optimized storage. As 
-          <span class="medium gradient">1.2 million</span> small files stream in,
-          progress bars track execution while the bandwidth gauges compare
-          POSIX, GDS, and AiSIO performance. 
-        </p>
-        <p>
-          Terminal commands reveal the dataset structure and demonstrate the ability
-          of AiSIO to keep the <br><span class="medium gradient">file system 
-          mounted</span> while the GPU processes data. This is possible with
-          hardware multi-path via SR-IOV.
-        </p>
-      </div>
-      <div>
-        <h4 class="gradient">The future of AI</h4>
-        <p>
-          Small-file I/O is a critical bottleneck in AI training and inference
-          workloads, especially with datasets like ImageNet. AiSIO addresses this
-          challenge head-on, delivering <span class="medium gradient">scalable 
-          performance</span> without sacrificing file system compatibility.
-        </p>
+      <div style="padding: 30px 50px;">
+        <h1 style="margin-top:7.4px;">Inference Engine Cold-start with OpenDS</h1>
+        <div class="subgrid">
+          <div>
+            <div id="opends-cast" class="asciinema"></div>
+            <h2>OpenDS · 1.92s</h2>
+          </div>
+          <div>
+            <p class="blue">Experiment B: Loading the Llama 3.3 70B (Q6_K) model from NVMe into GPU memory with llama.cpp.</p>
+            <div class="grid-list">
+              <span class="gradient icon">10.8x</span>
+              <span>faster than<br>the default loader</span>
+            </div>
+            <div class="grid-list">
+              <span class="gradient icon">2.2x</span>
+              <span>faster than<br>the optimized loader</span>
+            </div>
+          </div>
+          <div>
+            <div id="mmap-cast" class="asciinema"></div>
+            <h2>mmap (default) · 20.68s</h2>
+          </div>
+          <div>
+            <div id="dio-cast" class="asciinema"></div>
+            <h2>dio (optimized) · 4.24s</h2>
+          </div>
+          <script src="{{ url_for('static', filename='asciinema-player.js') }}"></script>
+          <script>
+            const players = [
+              AsciinemaPlayer.create(
+                "{{ url_for('static', filename='opends.cast') }}",
+                document.getElementById("opends-cast"),
+                { autoPlay: true, loop: false, fit: "width", controls: false, theme: "aisio" }
+              ),
+              AsciinemaPlayer.create(
+                "{{ url_for('static', filename='mmap.cast') }}",
+                document.getElementById("mmap-cast"),
+                { autoPlay: true, loop: false, fit: "width", controls: false, theme: "aisio" }
+              ),
+              AsciinemaPlayer.create(
+                "{{ url_for('static', filename='dio.cast') }}",
+                document.getElementById("dio-cast"),
+                { autoPlay: true, loop: false, fit: "width", controls: false, theme: "aisio" }
+              ),
+            ];
+  
+            document.getElementById("opends-cast").addEventListener("click", () => {
+              players.forEach(player => player.seek(0).then(() => player.play()));
+            });
+          </script>
+        </div>
       </div>
     </main>
     <script>
       const injectedcss = fetch("{{ url_for('static', filename='injected.css') }}").then(res => res.text());
       const fontfacecss = fetch("{{ url_for('static', filename='font-face.css') }}").then(res => res.text());
-      let gifincrease = 0;
       
-      const iframe1 = document.getElementById("benchmark-dashboard");
+      const totalCells = 80;
+      const cpuBar = document.getElementById("cpu-bar");
+      const cpuCells = cpuBar.querySelector(".cells");
+      const cpuValue = document.querySelector(".cpu-value");
+      const gpuBar = document.getElementById("gpu-bar");
+      const gpuCells = gpuBar.querySelector(".cells");
+      const gpuValue = document.querySelector(".gpu-value");
+
+      for (let i = 0; i < totalCells; i++) {
+        cpuCells.appendChild(document.createElement("span"));
+        gpuCells.appendChild(document.createElement("span"));
+      }
+
+      const readPanelPercent = (doc, id) => {
+        const panel = doc.getElementById(id);
+        if (!panel) return null;
+        const label = panel.querySelector(`div[style*="flex-direction: row-reverse"] :first-child`);
+        if (!label) return null;
+        const percent = parseFloat(label.textContent);
+        return Number.isNaN(percent) ? null : percent;
+      };
+
+      const updateUtilBars = (percent, cells, value) => {
+        if (percent === null) return;
+        const on = Math.round(percent / 100 * totalCells);
+        cells.childNodes.forEach((cell, i) => cell.className = i < on ? "on" : "");
+        value.textContent = `${percent.toLocaleString("en-US", { maximumFractionDigits: 1 })}%`;
+      };
+
+      const iframe1 = document.getElementById("util-dashboard");
       iframe1.onload = async () => {
         const doc = iframe1.contentDocument || iframe1.contentWindow.document;
         const style = doc.head.appendChild(doc.createElement("style"));
         fontfacecss.then(css => style.innerHTML += css);
         injectedcss.then(css => style.innerHTML += css);
 
-        await new Promise(resolve => setTimeout(resolve, 500))
-        
-        const bars = doc.querySelectorAll(".grafana-app #\\35 , #\\31 0 , #\\31 5 ");
-        bars.forEach(el => {
-          let container = el.querySelector(`div[style*="flex-direction: row-reverse"] :first-child`);
-          container.innerHTML = `${Math.round(container.nextElementSibling.offsetWidth / container.parentElement.offsetWidth * 100)}%`;
-          setInterval(() => {
-            container.innerHTML = `${Math.round(container.nextElementSibling.offsetWidth / container.parentElement.offsetWidth * 100)}%`;
-          }, 500);
-        });
-
-        let aisio = doc.querySelector(`.grafana-app #\\31 5  div[style*="flex-direction: row-reverse"] :first-child`);
-        new MutationObserver(() => {
-          if (aisio.nextElementSibling.offsetWidth < 5) {
-            let gif = document.querySelector("#terminal img");
-            gif.src = `{{url_for('static', filename='rec-crop.gif')}}?it=${++gifincrease}`
-          }
-        }).observe(aisio.nextElementSibling, {attributes: true});
+        setInterval(() => {
+          const cpupercent = readPanelPercent(doc, cpuBar.dataset.panel);
+          updateUtilBars(cpupercent, cpuCells, cpuValue);
+          const gpupercent = readPanelPercent(doc, gpuBar.dataset.panel);
+          updateUtilBars(gpupercent, gpuCells, gpuValue);
+        }, 500);
       };
 
-      const iframe2 = document.getElementById("ratio-dashboard");
+      const applyGaugeGradient = (win, color, stops) => {
+        const proto = win.CanvasRenderingContext2D.prototype;
+        const { beginPath, arc, fill, stroke } = proto;
+
+        const gradient = (ctx) => {
+          const { x, y, r } = ctx.gaugeArc;
+          const g = ctx.createLinearGradient(x - r, y, x + r, y);
+          stops.forEach((stop, i) => g.addColorStop(i / (stops.length - 1) * 0.8, stop));
+          return g;
+        };
+
+        proto.beginPath = function (...args) {
+          this.gaugeArc = null;
+          return beginPath.apply(this, args);
+        };
+        proto.arc = function (x, y, r, ...rest) {
+          if (!this.gaugeArc || r > this.gaugeArc.r) this.gaugeArc = { x, y, r };
+          return arc.call(this, x, y, r, ...rest);
+        };
+        proto.fill = function (...args) {
+          if (this.gaugeArc && this.fillStyle === color) this.fillStyle = gradient(this);
+          return fill.apply(this, args);
+        };
+        proto.stroke = function (...args) {
+          if (this.gaugeArc && this.strokeStyle === color) this.strokeStyle = gradient(this);
+          return stroke.apply(this, args);
+        };
+      };
+
+      const iframe2 = document.getElementById("iops-dashboard");
       iframe2.onload = async () => {
         const doc = iframe2.contentDocument || iframe2.contentWindow.document;
         const style = doc.head.appendChild(doc.createElement("style"));
         fontfacecss.then(css => style.innerHTML += css);
         injectedcss.then(css => style.innerHTML += css);
+        applyGaugeGradient(iframe2.contentWindow, "#ffffff", ["#06B8F3", "#9C6DE1"]);
+      };
 
-        await new Promise(resolve => setTimeout(resolve, 500))
-
-        const ratio = doc.querySelector(`div[style*="display: flex; flex-flow:"] [style*="line-height: 1.2;"] span`);
-        if (!ratio.innerHTML.length) ratio.innerHTML = "9.11";
+      const iframe3 = document.getElementById("millions-dashboard");
+      iframe3.onload = async () => {
+        const doc = iframe3.contentDocument || iframe3.contentWindow.document;
+        const style = doc.head.appendChild(doc.createElement("style"));
+        fontfacecss.then(css => style.innerHTML += css);
+        injectedcss.then(css => style.innerHTML += css);
       };
     </script>
   </body>

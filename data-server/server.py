@@ -18,7 +18,7 @@ def get_data():
 
     try:
         data = request.args.get("source", type=str).lower()
-        if data not in ["posix", "gds", "aisio"]:
+        if data not in ["xnvmeperf-cuda-run", "xnvmeperf-run", "cpu-utilization", "gpu-utilization"]:
             log.error("Wrong source")
             return Response(None, 500)
 
@@ -36,7 +36,7 @@ def get_data():
 def post():
     try:
         source = request.args.get("source", type=str).lower()
-        if source not in ["posix", "gds", "aisio"]:
+        if source not in ["xnvmeperf-cuda-run", "xnvmeperf-run", "cpu-utilization", "gpu-utilization"]:
             log.error(f"Wrong source({source})")
             return Response(None, 500)
 
