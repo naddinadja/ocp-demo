@@ -17,7 +17,7 @@ body {
   background-image: url(/static/background2026.png);
   background-color: white;
   color: rgb(17, 18, 23);
-  padding: 60px 50px 0px 50px;
+  padding: 90px 50px 0px 50px;
   background-size: cover;
 }
 
@@ -29,10 +29,10 @@ h1 {
   color: white;
   font-weight: 700;
   font-size: 50px;
-  margin: 12px 0 18px 0;
+  margin: 12px 0 60px 0;
 }
 h2 {
-  font-size: 24px;
+  font-size: 28px;
   text-align: center;
 }
 h4 {
@@ -42,7 +42,7 @@ h4 {
   justify-content: space-between;
 }
 h5 {
-  font-size: 20px;
+  font-size: 30px;
   font-weight: normal;
   margin: 15px 0px;
 }
@@ -57,6 +57,10 @@ code {
   font-family: monospace;
   font-size: 120%;
   margin: 5px;
+}
+
+main.grid {
+  grid-template-columns: 7fr 1fr 8fr;
 }
 
 .grid {
@@ -88,6 +92,17 @@ code {
   padding: 30px 50px;
   display: flex;
   flex-direction: column;
+  position: relative;
+}
+
+.asciinema {
+  box-shadow: 0 0 30px -40px var(--blue);
+  outline: 1px solid transparent;
+  transition: all 200ms;
+}
+.asciinema.finished {
+  box-shadow: 0 0 30px -5px var(--blue);
+  outline: 1px solid var(--light-blue);
 }
 
 .grid #terminal {
@@ -106,25 +121,39 @@ code {
   display: grid;
   gap: 0px 20px;
   justify-content: center;
-  margin: 80px 0px;
+  margin: 70px 0px;
   position: relative;
 }
 
 .grid-list::before {
   content: "";
   position: absolute;
-  width: 619px;
+  width: 594px;
   height: 140px;
   background-image: linear-gradient(90deg, rgba(0,0,0,0), #202F41);
   top: -20px;
   z-index: -1;
 }
 
-.grid-list span.icon {
+.grid-list span.icon,
+.icon {
   font-weight: bold;
   font-size: 90px;
   text-align: right;
   width: 100%;
+}
+
+.icon.millions {
+  position: absolute;
+  top: 230px;
+  left: 50%;
+  transform: translateX(-50%);
+  line-height: 1;
+  text-align: center;
+}
+.icon.millions.small {
+  top: 62px;
+  font-size: 32px;
 }
 
 .grid-list > span {
@@ -137,8 +166,16 @@ iframe {
   width: 100%;
   transform-origin: top left;
 }
-#iops-dashboard {
-  height: 400px;
+#total-iops-dashboard {
+  height: 350px;
+  margin-bottom: 60px;
+}
+#cpu-iops-dashboard,
+#gpu-iops-dashboard {
+  height: 280px;
+  width: 340px;
+  transform: scale(0.5);
+  margin-bottom: -100%;
 }
 #ratio-dashboard {
   height:50px;
@@ -258,8 +295,10 @@ p:last-child {
   margin: 0px -20px 0 -30px;
 }
 
-.blue {
+p.blue {
   color: #06B8F3;
+  font-size: 24px;
+  margin: 0px;
 }
 
 .parameters {
@@ -275,18 +314,25 @@ p:last-child {
 }
 
 .bar-total {
-  font-size: 16px;
+  font-size: 18px;
   opacity: 60%;
   transform: translate(20px, -1px);
   display: inline-block;
 }
 
-.grid.qr {
+.qr {
+  display: grid;
+  grid-template-columns: 1fr;
   justify-items: center;
   text-align: center;
   gap: 9px;
-  width: 380px;
   align-self: center;
+}
+.qr p {
+  margin: 10px 0px 30px 0px;
+}
+.qr h2 {
+  margin: 10px 0px 30px 0px;
 }
 
 .svg {
@@ -301,4 +347,21 @@ p:last-child {
 .svg#aisio {
   mask: url(/static/aisio.svg) center / contain no-repeat;
   mask-mode: luminance;
+}
+
+.grid.util {
+  grid-template-columns: [util-start] 170px 1fr [util-end];
+  gap: 0px 30px;
+}
+
+.grid.util > p {
+  grid-column: util;
+  font-size: 18px;
+  margin-top: 0px;
+  margin-bottom: 80px;
+}
+
+.cpu-value,
+.gpu-value {
+  font-weight: bold;
 }

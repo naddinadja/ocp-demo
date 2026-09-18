@@ -18,31 +18,42 @@
     <main class="grid">
       <div>
         <h1>
-          <span style="top:12px;position:relative;">~</span>
-          <iframe id="millions-dashboard" src="/grafana/d/7612585a-3923-4db1-92d5-4105ed41723f/million-iops?kiosk"></iframe>
-          IOPS with AiSIO
+          Accelerator-integrated Storage I/O
         </h1>
         <div class="bordered">
           <p class="blue">Experiment A: Running CPU- and GPU-initiated I/O at the same time on one server. </p>
-          <iframe id="iops-dashboard" src="/grafana/d/9563df02-7028-435f-9491-24af541fa5b6/ocp-2026?kiosk"></iframe>
-          <div class="grid parameters">
+          <div class="gradient icon millions">102M<br>IOPS</div>
+          <iframe id="total-iops-dashboard" src="/grafana/d/b44feb8c-c188-44cc-b33f-91fd9827f485/ocp26-total-iops?kiosk"></iframe>
+          <div class="grid util">
+            <div style="position: relative">
+              <div class="gradient icon millions small">53M</div>
+              <iframe id="cpu-iops-dashboard" src="/grafana/d/9563df02-7028-435f-9491-24af541fa5b6/ocp26-cpu-iops?kiosk"></iframe>
+            </div>
+            <div>
+              <h5><span>CPU Utilization</span> <span class="cpu-value"></span><span class="bar-total">total: 48 Cores / 96 threads</span></h5>
+              <div class="htop-bar" id="cpu-bar" data-panel="2" data-total="50">
+                <span class="bracket">[</span>
+                <span class="cells"></span> 
+                <span class="bracket">]</span>
+              </div>
+              <div class="footnote">CPU utilization reported by <code>mpstat</code></div>
+            </div>
             <p>8 NVMe SSDs · 512 B random reads · 1 queue per SSD · Queue depth 128 · 2 CPU threads</p>
+            <div style="position: relative">
+              <iframe id="gpu-iops-dashboard" src="/grafana/d/28f64723-1cf5-4131-bcdb-c003e9beecf0/ocp26-gpu-iops?kiosk"></iframe>
+              <div class="gradient icon millions small">49M</div>
+            </div>
+            <div>
+              <h5><span>GPU Utilization</span> <span class="gpu-value"></span><span class="bar-total">total: 7296 warps</span></h5>
+              <div class="htop-bar" id="gpu-bar" data-panel="3" data-total="50">
+                <span class="bracket">[</span>
+                <span class="cells"></span>
+                <span class="bracket">]</span>
+              </div>
+              <div class="footnote">SM occupancy reported by <code>dcgmi</code> (Field ID: 1003)</div>
+            </div>
             <p>8 NVMe SSDs · 512 B random reads · 2 queues per SSD · Queue depth 128 · 2048 GPU threads</p>
           </div>
-          <h5><span>CPU Utilization</span> <span class="cpu-value"></span><span class="bar-total">total: 48 Cores / 96 threads</span></h5>
-          <div class="htop-bar" id="cpu-bar" data-panel="2" data-total="50">
-            <span class="bracket">[</span>
-            <span class="cells"></span> 
-            <span class="bracket">]</span>
-          </div>
-          <div class="footnote">CPU utilization reported by <code>mpstat</code></div>
-          <h5><span>GPU Utilization</span> <span class="gpu-value"></span><span class="bar-total">total: 7296 warps</span></h5>
-          <div class="htop-bar" id="gpu-bar" data-panel="3" data-total="50">
-            <span class="bracket">[</span>
-            <span class="cells"></span>
-            <span class="bracket">]</span>
-          </div>
-          <div class="footnote">SM occupancy reported by <code>dcgmi</code> (Field ID: 1003)</div>
           <!-- 
           xnvmeperf run
           - Devices: [0000:ca:00.0, 0000:cb:00.0, 0000:cc:00.0, 0000:cd:00.0, 0000:e1:00.0, 0000:e2:00.0, 0000:e3:00.0, 0000:e4:00.0] (total: 8)
@@ -70,22 +81,22 @@
           - host_heap_size: 536870912 bytes
           - device_heap_size: 538968064 bytes
           -->
-          <h2>Follow our work on Github</h2>
-          <div class="grid qr">
-            <div id="aisio" class="svg"></div>
-            <div id="opends" class="svg"></div>
-            <div>AiSIO</div>
-            <div>OpenDS</div>
-          </div>
         </div>
         <iframe id="util-dashboard" src="/grafana/d/7732d1a4-4522-4f1a-b55b-f686e7a95519/utilization?kiosk"></iframe>
       </div>
-      <div style="padding: 30px 50px;">
-        <h1 style="margin-top:7.4px;">Inference Engine Cold-start with OpenDS</h1>
+      <div class="qr">
+        <h2>Follow our work on Github</h2>
+        <div id="aisio" class="svg"></div>
+        <p>AiSIO</p>
+        <div id="opends" class="svg"></div>
+        <p>OpenDS</p>
+      </div>
+      <div style="padding: 0px 50px;">
+        <h1>Inference Engine Cold-start with OpenDS</h1>
         <div class="subgrid">
           <div>
             <div id="opends-cast" class="asciinema"></div>
-            <h2>OpenDS · 1.92s</h2>
+            <h2><span class="gradient">OpenDS</span> · 1.92s</h2>
           </div>
           <div>
             <p class="blue">Experiment B: Loading the Llama 3.3 70B (Q6_K) model from NVMe into GPU memory with llama.cpp.</p>
@@ -108,26 +119,51 @@
           </div>
           <script src="{{ url_for('static', filename='asciinema-player.js') }}"></script>
           <script>
+            const cast_opends = document.getElementById("opends-cast");
+            const cast_mmap = document.getElementById("mmap-cast");
+            const cast_dio = document.getElementById("dio-cast");
+
+            const stopIndicators = () => {
+              cast_opends.classList.remove("finished");
+              cast_mmap.classList.remove("finished");
+              cast_dio.classList.remove("finished");
+
+              setTimeout(() => {
+                cast_opends.classList.add("finished");
+              },5511);
+              setTimeout(() => {
+                cast_dio.classList.add("finished");
+              },7079);
+              setTimeout(() => {
+                cast_mmap.classList.add("finished");
+              },23702);
+            };
+
             const players = [
               AsciinemaPlayer.create(
                 "{{ url_for('static', filename='opends.cast') }}",
-                document.getElementById("opends-cast"),
+                cast_opends,
                 { autoPlay: true, loop: false, fit: "width", controls: false, theme: "aisio" }
               ),
               AsciinemaPlayer.create(
                 "{{ url_for('static', filename='mmap.cast') }}",
-                document.getElementById("mmap-cast"),
+                cast_mmap,
                 { autoPlay: true, loop: false, fit: "width", controls: false, theme: "aisio" }
               ),
               AsciinemaPlayer.create(
                 "{{ url_for('static', filename='dio.cast') }}",
-                document.getElementById("dio-cast"),
+                cast_dio,
                 { autoPlay: true, loop: false, fit: "width", controls: false, theme: "aisio" }
               ),
             ];
+
+            setTimeout(stopIndicators, 1000);
   
-            document.getElementById("opends-cast").addEventListener("click", () => {
-              players.forEach(player => player.seek(0).then(() => player.play()));
+            cast_opends.addEventListener("click", () => {
+              players.forEach(player => player.seek(0).then(() => {
+                player.play();
+                stopIndicators();
+            }));
             });
           </script>
         </div>
@@ -210,22 +246,20 @@
         };
       };
 
-      const iframe2 = document.getElementById("iops-dashboard");
-      iframe2.onload = async () => {
-        const doc = iframe2.contentDocument || iframe2.contentWindow.document;
-        const style = doc.head.appendChild(doc.createElement("style"));
-        fontfacecss.then(css => style.innerHTML += css);
-        injectedcss.then(css => style.innerHTML += css);
-        applyGaugeGradient(iframe2.contentWindow, "#ffffff", ["#06B8F3", "#9C6DE1"]);
-      };
-
-      const iframe3 = document.getElementById("millions-dashboard");
-      iframe3.onload = async () => {
-        const doc = iframe3.contentDocument || iframe3.contentWindow.document;
-        const style = doc.head.appendChild(doc.createElement("style"));
-        fontfacecss.then(css => style.innerHTML += css);
-        injectedcss.then(css => style.innerHTML += css);
-      };
+      const gauge_dashboards = ["total-iops-dashboard", "cpu-iops-dashboard", "gpu-iops-dashboard"];
+      gauge_dashboards.forEach((dashboard) => {
+        const iframe = document.getElementById(dashboard);
+        iframe.onload = async () => {
+          const doc = iframe.contentDocument || iframe.contentWindow.document;
+          const style = doc.head.appendChild(doc.createElement("style"));
+          fontfacecss.then(css => style.innerHTML += css);
+          injectedcss.then(css => style.innerHTML += css);
+          if (dashboard.includes("total")) {
+            style.innerHTML += "span.flot-temp-elem { font-size: 30px !important; top:300px !important; }";
+          }
+          applyGaugeGradient(iframe.contentWindow, "#ffffff", ["#06B8F3", "#9C6DE1"]);
+        };
+      })
     </script>
   </body>
 </html>

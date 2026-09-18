@@ -71,3 +71,19 @@ div[style*="display: flex; flex-flow:"] [style*="line-height: 1.2;"] span {
   background-clip: text;
   text-align:center;
 }
+
+div[style*="width: 290px; height: 316px;"] {
+  height: unset !important;
+  transform: translateY(-40px);
+}
+
+.flot-temp-elem {
+  font-size: 30px !important;
+  top: 240px !important;
+  width: 200px;
+  text-align: center;
+}
+
+[style*="overflow: hidden"] {
+  overflow: visible !important;
+}
