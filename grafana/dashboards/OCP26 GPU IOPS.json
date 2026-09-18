@@ -18,7 +18,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 6,
+  "id": 8,
   "links": [],
   "liveNow": true,
   "panels": [
@@ -35,7 +35,7 @@
           },
           "decimals": 0,
           "mappings": [],
-          "max": 110000000,
+          "max": 70000000,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -60,7 +60,7 @@
         "x": 0,
         "y": 0
       },
-      "id": 2,
+      "id": 1,
       "options": {
         "minVizHeight": 75,
         "minVizWidth": 75,
@@ -69,7 +69,7 @@
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "/^Total IOPS$/",
+          "fields": "/^IOPS$/",
           "values": false
         },
         "showThresholdLabels": false,
@@ -107,38 +107,6 @@
           "root_selector": "",
           "source": "url",
           "type": "csv",
-          "url": "http://nginx/data?source=xnvmeperf-run&from=$__from&to=$__to",
-          "url_options": {
-            "data": "",
-            "method": "GET"
-          }
-        },
-        {
-          "columns": [
-            {
-              "selector": "Time",
-              "text": "Time",
-              "type": "number"
-            },
-            {
-              "selector": " IOPS",
-              "text": "IOPS",
-              "type": "number"
-            }
-          ],
-          "datasource": {
-            "type": "yesoreyeram-infinity-datasource",
-            "uid": "PD0067CAD9A63E081"
-          },
-          "filters": [],
-          "format": "table",
-          "global_query_id": "",
-          "hide": false,
-          "parser": "backend",
-          "refId": "B",
-          "root_selector": "",
-          "source": "url",
-          "type": "csv",
           "url": "http://nginx/data?source=xnvmeperf-cuda-run&from=$__from&to=$__to",
           "url_options": {
             "data": "",
@@ -147,40 +115,6 @@
         }
       ],
       "title": "",
-      "transformations": [
-        {
-          "id": "joinByField",
-          "options": {
-            "byField": "Time",
-            "mode": "outer"
-          }
-        },
-        {
-          "id": "calculateField",
-          "options": {
-            "alias": "Total IOPS",
-            "binary": {
-              "left": {
-                "matcher": {
-                  "id": "byName",
-                  "options": "IOPS A"
-                }
-              },
-              "operator": "+",
-              "right": {
-                "matcher": {
-                  "id": "byName",
-                  "options": "IOPS B"
-                }
-              }
-            },
-            "mode": "binary",
-            "reduce": {
-              "reducer": "sum"
-            }
-          }
-        }
-      ],
       "transparent": true,
       "type": "gauge"
     }
@@ -205,7 +139,7 @@
     ]
   },
   "timezone": "",
-  "title": "OCP26 - Total IOPS",
-  "uid": "b44feb8c-c188-44cc-b33f-91fd9827f485",
-  "version": 3
+  "title": "OCP26 - GPU IOPS",
+  "uid": "28f64723-1cf5-4131-bcdb-c003e9beecf0",
+  "version": 1
 }
