@@ -13,7 +13,7 @@ services:
       - ./dashboard/static/injected.css:/app/static/injected.css
 
   grafana:
-    image: grafana/grafana-enterprise
+    image: grafana/grafana-enterprise:12.2.0
     container_name: grafana
     restart: unless-stopped
     ports:
