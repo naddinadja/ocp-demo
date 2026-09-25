@@ -5,19 +5,8 @@ BaM. The `docker-compose.yaml` hosts multiple docker containers with Grafana, th
 dashboard, and a data-server. It is all behind a reverse proxy and can be accessed on
 port 80.
 
-## Data
-
-The data server has no data to begin with, but has an endpoint on `/post`, wich expects
-2 parameters:
-
-- `source`: one of the three tools, `posix`, `gds`, or `aisio`.  Case insensitive.
-- `data`: a single CSV line with 4 comma-separated columns `Time, Batches, IOPS, MiB/s`.
-
-Example: `http://localhost/post?source=posix&data=0,0,0,0\n`
-
-The `misc/generate-logs.py` helper script can be used to generate artificial logs, and the
-`misc/push.py` script can be used to push data from a local file to the data server
-endpoint.
+This repository is reused and overwritten when new demos are needed. Git tags are used
+to reference older demos.
 
 ## Run
 
@@ -29,33 +18,56 @@ docker compose up --build
 
 and go to `http://localhost`.
 
-### Benchmarking
+## Data
 
-The `misc/run-benchmark.py` script can be used to run the SIL benchmarking tool and push
-the data to the data-server.
+The data server has no data to begin with, but has an endpoint on `/post`, wich expects
+2 parameters:
 
-```bash
-usage: run-benchmark [-h] [--dataserver DATASERVER] [--host HOST] [--username USERNAME] [--key_filename KEY_FILENAME] [{posix,gds,aisio}]
+- `source`: the CSV file that you want to save the data to. See the Dockerfile for the
+  data server (`./data-server/Dockerfile`) for which files are available (or add more).
+- `data`: a single CSV line with comma-separated columns.
 
-positional arguments:
-  {posix,gds,aisio}     Which benchmark to run. (default: aisio)
+Examples:
 
-options:
-  -h, --help            show this help message and exit
-  --dataserver DATASERVER, -d DATASERVER
-                        Hostname of server to push the benchmark results to. (default: localhost)
-  --host HOST           Host on which to run the benchmark. If none given, it is run locally. (default: None)
-  --username USERNAME, -u USERNAME
-                        Username to login with on host. Not necessary if run locally. (default: )
-  --key_filename KEY_FILENAME, -k KEY_FILENAME
-                        Path to a private key which grants access to establish an SSH connection with the host. Not necessary if run locally. (default: )
+- `http://localhost/post?source=posix&data=0,0,0,0\n`
+- `http://localhost/post?source=gpu-utilization&data=0.0,0,0,0,0,0\n`
+
+The `misc/push.py` script can be used to push data from a local file to the data server
+endpoint at the correct intervals.
+
+## Grafana
+
+Grafana dashboards are saved as JSON files in `./grafana/dashboards`. To modify
+them, start the docker compose and go to `http://localhost/grafana`. From here, you
+can modify or create new dashboards. To save modified dashboards, click the "Save"
+button and copy the JSON object into the correct file in `./grafana/dashboards`. To
+save a created dashboard, you need to find the JSON object in the settings and
+create the JSON file in `./grafana/dashboards`.
+
+### Live updating
+
+The following settings must be set on each dahsboard in order to enable live
+updating of the dashboard when embedded in the demo webpage.
+
+```json
+{
+  // ...
+  "liveNow": true,
+  // ...
+  "refresh": "500ms",
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": true,
+    "refresh_intervals": [
+      "500ms",
+      "1s",
+      "5s"
+    ]
+  },
+  "timezone": "",
+  // ...
+}
 ```
-
-For example, it can be used as so:
-
-```bash
-python run-benchmark.py aisio -d <host-of-dashboard> --host <host-of-benchmark> -u root -k /path/to/private-key
-```
-
-You can change some parameters in the benchmarking tool, such as the batch size and
-number of batches, in the Python script. The dashboard should adjust automatically.
