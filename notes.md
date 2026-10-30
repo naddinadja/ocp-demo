@@ -50,3 +50,21 @@ mpstat 1 | awk '/^[0-9]/ {print 100 - $NF}'
 
 dcgmi dmon -d 500 -i 0 -e 1009,1010,1002,1003
 ```
+
+## Pushing data to the data-server
+
+Notice `data-server/Dockerfile`, where the data files are defined. If you decide to
+have other CSV files with other columns for your grafana dashboard, these should be
+added both in this Dockerfile, but also incorporated in `misc/push.py`, which is
+responsible for pushing data from the local machine to the data server.
+
+Data should be on your local machine as CSV with an empty line in the end. If you start
+the push script and stop it mid-way, you might end up with the next push adding data
+to the same line as where the previous run ended. This will corrupt the data file and
+it will not be possible to read from it again. You can enter the Docker container and
+remove the line from the file. You enter the file with the following command:
+
+```bash
+# "data" is the docker ID of the data-server container.
+docker exec -it data /bin/bash
+```
